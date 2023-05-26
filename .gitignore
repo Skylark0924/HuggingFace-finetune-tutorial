@@ -1,2 +1,6 @@
 .idea
 token.txt
+/NLP/wandb/
+/NLP/text_classification_finetune/
+/NLP/token_classification_finetune/
+/NLP/question_answering_finetune/
