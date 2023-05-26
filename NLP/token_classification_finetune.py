@@ -91,7 +91,7 @@ def fine_tune(pre_trained_model, tokenizer, tokenized_dataset, data_collator, id
 
 if __name__ == '__main__':
     shutup.please()
-    with open('../token/token.txt') as f:
+    with open('../token.txt') as f:
         my_token = f.read()
     login(my_token)
 

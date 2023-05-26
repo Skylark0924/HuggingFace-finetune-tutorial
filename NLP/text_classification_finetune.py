@@ -59,7 +59,7 @@ if __name__ == '__main__':
     shutup.please()
 
     # Login in with your own API token
-    with open('../token/token.txt') as f:
+    with open('../token.txt') as f:
         my_token = f.read()
     login(my_token)
 
