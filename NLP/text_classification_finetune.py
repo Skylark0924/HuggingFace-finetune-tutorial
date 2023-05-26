@@ -1,8 +1,12 @@
+import os
+
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
 import evaluate
 import numpy as np
 import shutup
 from datasets import load_dataset
-from huggingface_hub import interpreter_login, notebook_login, login
+from huggingface_hub import login
 from transformers import AutoTokenizer, DataCollatorWithPadding, AutoModelForSequenceClassification, TrainingArguments, \
     Trainer
 import rofunc as rf
@@ -78,7 +82,7 @@ if __name__ == '__main__':
 
     for pre_trained_model in pre_trained_models:
         # preprocess the datasetd
-        tokenizer = AutoTokenizer.from_pretrained(pre_trained_model, use_fast=False)
+        tokenizer = AutoTokenizer.from_pretrained(pre_trained_model)
         tokenized_dataset = dataset.map(preprocess_function, batched=True)
         data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
 

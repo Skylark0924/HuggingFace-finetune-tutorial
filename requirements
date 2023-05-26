@@ -2,3 +2,4 @@ transformers
 rofunc
 datasets
 evaluate
+seqeval

@@ -1,8 +1,10 @@
+import os
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 import evaluate
 import numpy as np
 import shutup
 from datasets import load_dataset
-from huggingface_hub import interpreter_login, notebook_login, login
+from huggingface_hub import login
 from transformers import AutoTokenizer, DataCollatorForTokenClassification, AutoModelForTokenClassification, TrainingArguments, \
     Trainer
 import rofunc as rf
@@ -96,6 +98,8 @@ if __name__ == '__main__':
     login(my_token)
 
     dataset = load_dataset("wnut_17")
+    label_list = dataset["train"].features[f"ner_tags"].feature.names
+    example = dataset["train"][0]
 
     pre_trained_models = ['bert-base-uncased', 'distilbert-base-uncased', 'albert-base-v2',
                           'google/bigbird-roberta-base',
@@ -107,10 +111,10 @@ if __name__ == '__main__':
                           'xlm-roberta-xlarge', 'xlm-mlm-en-2048']
 
     for pre_trained_model in pre_trained_models:
-        tokenizer = AutoTokenizer.from_pretrained(pre_trained_model, use_fast=False)
+        tokenizer = AutoTokenizer.from_pretrained(pre_trained_model)
         tokenized_dataset = dataset.map(preprocess_function, batched=True)
         data_collator = DataCollatorForTokenClassification(tokenizer=tokenizer)
-        accuracy = evaluate.load("accuracy")
+        seqeval = evaluate.load("seqeval")
 
         labels = [label_list[i] for i in example[f"ner_tags"]]
         id2label = {
