@@ -11,6 +11,8 @@ each model. The models are divided into 4 task categories:
 
 ```
 git clone https://github.com/Skylark0924/HuggingFace-finetune-tutorial
+
+pip install -r requirements.txt 
 ```
 
 ## Usage
@@ -20,3 +22,5 @@ git clone https://github.com/Skylark0924/HuggingFace-finetune-tutorial
 1. Sign up HuggingFace: https://huggingface.co/join
 2. Create and copy your API token: https://huggingface.co/settings/tokens
 3. Add your API token to `token.txt` under the root directory of this repository
+
+### 
