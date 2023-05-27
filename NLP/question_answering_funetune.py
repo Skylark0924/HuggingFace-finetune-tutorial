@@ -1,3 +1,11 @@
+"""
+Question answering tasks return an answer given a question. If you’ve ever asked a virtual assistant like Alexa, Siri
+or Google what the weather is, then you’ve used a question answering model before. There are two common types
+of question answering tasks:
+- Extractive: extract the answer from the given context.
+- Abstractive: generate an answer from the context that correctly answers the question.
+"""
+
 import os
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -66,7 +74,7 @@ def fine_tune(pre_trained_model, tokenizer, tokenized_dataset, data_collator):
 
     # Define training hyperparameters
     training_args = TrainingArguments(
-        output_dir="question_answering_finetune",
+        output_dir="QA_{}_finetune".format(pre_trained_model),
         learning_rate=2e-5,
         per_device_train_batch_size=16,
         per_device_eval_batch_size=16,
@@ -114,9 +122,12 @@ if __name__ == '__main__':
                           'xlm-roberta-xlarge', 'xlm-mlm-en-2048']
 
     for pre_trained_model in pre_trained_models:
-        tokenizer = AutoTokenizer.from_pretrained(pre_trained_model)
-        tokenized_dataset = dataset.map(preprocess_function, batched=True, remove_columns=dataset["train"].column_names)
-        data_collator = DefaultDataCollator()
+        try:
+            tokenizer = AutoTokenizer.from_pretrained(pre_trained_model)
+            tokenized_dataset = dataset.map(preprocess_function, batched=True, remove_columns=dataset["train"].column_names)
+            data_collator = DefaultDataCollator()
 
-        rf.utils.beauty_print('Current model: {}'.format(pre_trained_model), type='module')
-        fine_tune(pre_trained_model, tokenizer, tokenized_dataset, data_collator)
+            rf.utils.beauty_print('Current model: {}'.format(pre_trained_model), type='module')
+            fine_tune(pre_trained_model, tokenizer, tokenized_dataset, data_collator)
+        except:
+            rf.utils.beauty_print('Model {} is not suitable'.format(pre_trained_model), type='warning')
