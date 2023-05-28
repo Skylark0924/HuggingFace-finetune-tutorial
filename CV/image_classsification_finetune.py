@@ -90,7 +90,13 @@ if __name__ == '__main__':
         id2label[str(i)] = label
 
     # List of supported pre-trained model
-    pre_trained_models = ['google/vit-base-patch16-224-in21k', 'microsoft/beit-base-patch16-224', 'google/bit-50',
+    pre_trained_models = ['google/vit-base-patch16-224', 'google/vit-hybrid-base-bit-384',
+                          'microsoft/swin-tiny-patch4-window7-224', 'facebook/vit-msn-small',
+                          'microsoft/swinv2-tiny-patch4-window8-256',
+                          'google/vit-base-patch16-224-in21k', 'nvidia/mit-b0', 'microsoft/resnet-50',
+                          'sail/poolformer_s12', 'facebook/deit-base-distilled-patch16-224', 'openai/imagegpt-small',
+                          'google/mobilenet_v2_1.0_224', 'apple/mobilevit-small',
+                          'microsoft/beit-base-patch16-224', 'google/bit-50',
                           'facebook/convnext-tiny-224', 'facebook/convnextv2-tiny-1k-224', 'microsoft/cvt-13',
                           ]
 

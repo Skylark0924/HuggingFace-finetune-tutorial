@@ -126,7 +126,9 @@ if __name__ == '__main__':
     test_ds.set_transform(val_transforms)
 
     # List of supported pre-trained model
-    pre_trained_models = ['nvidia/mit-b0']
+    pre_trained_models = ['nvidia/mit-b0', 'nvidia/segformer-b0-finetuned-ade-512-512',
+                          'microsoft/beit-base-finetuned-ade-640-640', 'google/deeplabv3_mobilenet_v2_1.0_513',
+                          'apple/deeplabv3-mobilevit-small']
 
     # load the metric from evaluate
     metric = evaluate.load("mean_iou")

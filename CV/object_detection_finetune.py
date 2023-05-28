@@ -7,20 +7,18 @@ several cars). This task is commonly used in autonomous driving for detecting th
 traffic lights. Other applications include counting objects in images, image search, and more.
 """
 
+# TODO
+
 import os
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 import shutup
-from datasets import load_dataset, Audio
+from datasets import load_dataset
 from huggingface_hub import login
-from transformers import AutoModelForImageClassification, AutoImageProcessor, DefaultDataCollator, TrainingArguments, \
-    Trainer
-import evaluate
+from transformers import AutoModelForObjectDetection, AutoImageProcessor, TrainingArguments, Trainer
 import rofunc as rf
-import numpy as np
 import albumentations
 import numpy as np
-import torch
 
 
 def formatted_anns(image_id, category, area, bbox):
@@ -34,7 +32,6 @@ def formatted_anns(image_id, category, area, bbox):
             "bbox": list(bbox[i]),
         }
         annotations.append(new_ann)
-
     return annotations
 
 
@@ -55,7 +52,6 @@ def transform_aug_ann(examples):
         {"image_id": id_, "annotations": formatted_anns(id_, cat_, ar_, box_)}
         for id_, cat_, ar_, box_ in zip(image_ids, categories, area, bboxes)
     ]
-
     return image_processor(images=images, annotations=targets, return_tensors="pt")
 
 
@@ -68,61 +64,6 @@ def collate_fn(batch):
     batch["pixel_mask"] = encoding["pixel_mask"]
     batch["labels"] = labels
     return batch
-
-
-import json
-
-
-# format annotations the same as for training, no need for data augmentation
-def val_formatted_anns(image_id, objects):
-    annotations = []
-    for i in range(0, len(objects["id"])):
-        new_ann = {
-            "id": objects["id"][i],
-            "category_id": objects["category"][i],
-            "iscrowd": 0,
-            "image_id": image_id,
-            "area": objects["area"][i],
-            "bbox": objects["bbox"][i],
-        }
-        annotations.append(new_ann)
-
-    return annotations
-
-
-# Save images and annotations into the files torchvision.datasets.CocoDetection expects
-def save_cppe5_annotation_file_images(cppe5):
-    output_json = {}
-    path_output_cppe5 = f"{os.getcwd()}/cppe5/"
-
-    if not os.path.exists(path_output_cppe5):
-        os.makedirs(path_output_cppe5)
-
-    path_anno = os.path.join(path_output_cppe5, "cppe5_ann.json")
-    categories_json = [{"supercategory": "none", "id": id, "name": id2label[id]} for id in id2label]
-    output_json["images"] = []
-    output_json["annotations"] = []
-    for example in cppe5:
-        ann = val_formatted_anns(example["image_id"], example["objects"])
-        output_json["images"].append(
-            {
-                "id": example["image_id"],
-                "width": example["image"].width,
-                "height": example["image"].height,
-                "file_name": f"{example['image_id']}.png",
-            }
-        )
-        output_json["annotations"].extend(ann)
-    output_json["categories"] = categories_json
-
-    with open(path_anno, "w") as file:
-        json.dump(output_json, file, ensure_ascii=False, indent=4)
-
-    for im, img_id in zip(cppe5["image"], cppe5["image_id"]):
-        path_img = os.path.join(path_output_cppe5, f"{img_id}.png")
-        im.save(path_img)
-
-    return path_output_cppe5, path_anno
 
 
 def fine_tune(pre_trained_model, image_processor, encoded_dataset, label2id, id2label, dataset_name):
@@ -153,7 +94,7 @@ def fine_tune(pre_trained_model, image_processor, encoded_dataset, label2id, id2
         model=model,
         args=training_args,
         data_collator=collate_fn,
-        train_dataset=cppe5["train"],
+        train_dataset=encoded_dataset["train"],
         tokenizer=image_processor,
     )
 
@@ -182,12 +123,10 @@ if __name__ == '__main__':
     keep = [i for i in range(len(dataset["train"])) if i not in remove_idx]
     dataset["train"] = dataset["train"].select(keep)
     dataset["train"] = dataset["train"].with_transform(transform_aug_ann)
+    encoded_dataset = dataset
 
     # List of supported pre-trained model
-    pre_trained_models = ['facebook/detr-resnet-50']
-
-    # load the metric from evaluate
-    metric = evaluate.load("accuracy")
+    pre_trained_models = ['facebook/detr-resnet-50', 'hustvl/yolos-tiny']
 
     for pre_trained_model in pre_trained_models:
         try:
