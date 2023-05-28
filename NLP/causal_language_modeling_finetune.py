@@ -43,7 +43,7 @@ def fine_tune(pre_trained_model, tokenizer, lm_dataset, data_collator, dataset_n
 
     # Define training hyperparameters
     training_args = TrainingArguments(
-        output_dir="causal_lm_{}_{}_finetune".format(pre_trained_model, dataset_name),
+        output_dir="causal_lm_{}_{}_finetune".format(pre_trained_model.split('/')[-1], dataset_name.split('/')[-1]),
         learning_rate=2e-5,
         weight_decay=0.01,
         evaluation_strategy="epoch",
@@ -95,5 +95,6 @@ if __name__ == '__main__':
 
             rf.utils.beauty_print('Current model: {}'.format(pre_trained_model), type='module')
             fine_tune(pre_trained_model, tokenizer, lm_dataset, data_collator, dataset_name)
-        except:
-            rf.utils.beauty_print('Model {} is not suitable'.format(pre_trained_model), type='warning')
+        except Exception as e:
+            rf.utils.beauty_print('Model {} is not suitable, Exception: {}'.format(pre_trained_model, e),
+                                  type='warning')

@@ -1,0 +1,14 @@
+transformers
+rofunc
+datasets
+evaluate
+seqeval
+rouge_score
+sacrebleu
+jiwer
+soundfile
+librosa
+pytorchvideo
+timm
+albumentations
+git+https://github.com/facebookresearch/detectron2.git

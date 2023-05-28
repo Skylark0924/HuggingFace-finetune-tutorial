@@ -61,7 +61,7 @@ def fine_tune(pre_trained_model, tokenizer, lm_dataset, data_collator, dataset_n
 
     # Define training hyperparameters
     training_args = Seq2SeqTrainingArguments(
-        output_dir="translation_{}_{}_finetune".format(pre_trained_model, dataset_name),
+        output_dir="translation_{}_{}_finetune".format(pre_trained_model.split('/')[-1], dataset_name.split('/')[-1]),
         evaluation_strategy="epoch",
         learning_rate=2e-5,
         per_device_train_batch_size=16,

@@ -44,7 +44,7 @@ def fine_tune(pre_trained_model, lm_dataset, data_collator, dataset_name):
 
     # Define training hyperparameters
     training_args = TrainingArguments(
-        output_dir="masked_lm_{}_{}_finetune".format(pre_trained_model, dataset_name),
+        output_dir="masked_lm_{}_{}_finetune".format(pre_trained_model.split('/')[-1], dataset_name.split('/')[-1]),
         evaluation_strategy="epoch",
         learning_rate=2e-5,
         num_train_epochs=3,

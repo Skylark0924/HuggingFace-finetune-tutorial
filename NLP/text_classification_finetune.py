@@ -36,7 +36,7 @@ def fine_tune(pre_trained_model, tokenizer, tokenized_dataset, data_collator, id
 
     # Define training hyperparameters
     training_args = TrainingArguments(
-        output_dir="text_cls_{}_{}_finetune".format(pre_trained_model, dataset_name),
+        output_dir="text_cls_{}_{}_finetune".format(pre_trained_model.split('/')[-1], dataset_name.split('/')[-1]),
         learning_rate=2e-5,
         per_device_train_batch_size=16,
         per_device_eval_batch_size=16,
@@ -104,5 +104,5 @@ if __name__ == '__main__':
 
             rf.utils.beauty_print('Current model: {}'.format(pre_trained_model), type='module')
             fine_tune(pre_trained_model, tokenizer, tokenized_dataset, data_collator, id2label, label2id, dataset_name)
-        except:
-            rf.utils.beauty_print('Model {} is not suitable'.format(pre_trained_model), type='warning')
+        except Exception as e:
+            rf.utils.beauty_print('Model {} is not suitable, Exception: {}'.format(pre_trained_model, e), type='warning')

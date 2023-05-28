@@ -9,8 +9,7 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 import shutup
 from datasets import load_dataset
 from huggingface_hub import login
-from transformers import AutoTokenizer, DataCollatorForSeq2Seq, AutoModelForMultipleChoice, TrainingArguments, \
-    Trainer
+from transformers import AutoTokenizer, AutoModelForMultipleChoice, TrainingArguments, Trainer
 import evaluate
 import rofunc as rf
 import numpy as np
@@ -81,7 +80,7 @@ def fine_tune(pre_trained_model, tokenizer, tokenized_dataset, dataset_name):
 
     # Define training hyperparameters
     training_args = TrainingArguments(
-        output_dir="multi_choice_{}_{}_finetune".format(pre_trained_model, dataset_name),
+        output_dir="multi_choice_{}_{}_finetune".format(pre_trained_model.split('/')[-1], dataset_name.split('/')[-1]),
         evaluation_strategy="epoch",
         save_strategy="epoch",
         load_best_model_at_end=True,
@@ -137,5 +136,6 @@ if __name__ == '__main__':
 
             rf.utils.beauty_print('Current model: {}'.format(pre_trained_model), type='module')
             fine_tune(pre_trained_model, tokenizer, tokenized_dataset, dataset_name)
-        except:
-            rf.utils.beauty_print('Model {} is not suitable'.format(pre_trained_model), type='warning')
+        except Exception as e:
+            rf.utils.beauty_print('Model {} is not suitable, Exception: {}'.format(pre_trained_model, e),
+                                  type='warning')
