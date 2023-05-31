@@ -33,5 +33,6 @@ cd NLP
 python text_classification_finetune.py
 ```
 
-> Note: If you want to fine-tune a model on your own dataset, please modify the `dataset` variable in the file. And you 
+> **Note**
+> If you want to fine-tune a model on your own dataset, please modify the `dataset` variable in the file. And you 
 > can also use specific model by modifying the `pre_trained_model` variable.
